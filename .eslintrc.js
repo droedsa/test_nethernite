@@ -7,8 +7,11 @@ module.exports = {
     'plugin:vue/vue3-essential',
     'eslint:recommended',
     '@vue/eslint-config-typescript',
+    'plugin:prettier/recommended',
+    'prettier',
   ],
+  plugins: ['@typescript-eslint', 'prettier'],
   rules: {
     'vue/multi-word-component-names': 'off',
   },
-}
+};
