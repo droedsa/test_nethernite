@@ -1,6 +1,5 @@
 <template>
   <HelloWorld />
-  hello
 </template>
 
 <script lang="ts" setup>
