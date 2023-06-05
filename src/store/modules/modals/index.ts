@@ -17,7 +17,6 @@ const modalsModule: Module<ModalsState, RootState> = {
   }),
   mutations: {
     addModal(state, payload: ModalProps) {
-      console.log(payload);
       state.modals = [{ ...payload, isOpen: true }, ...state.modals];
     },
     removeModal(state, payload: string) {
