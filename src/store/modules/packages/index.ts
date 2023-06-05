@@ -1,37 +1,98 @@
 import { Module } from 'vuex';
 import { RootState } from '../../index';
+import api from '../../../service/api';
+
+export type PackageModel = {
+  hits: {
+    rank: number;
+    typeRank: number;
+    total: number;
+    dates: { [key: string]: number };
+    prev: {
+      rank: number;
+      typeRank: number;
+      total: number;
+    };
+  };
+  bandwidth: {
+    rank: number;
+    typeRank: number;
+    total: number;
+    dates: { [key: string]: number };
+    prev: {
+      rank: number;
+      typeRank: number;
+      total: number;
+    };
+  };
+  links: {
+    self: string;
+    versions: string;
+  };
+};
+
+export type Package = {
+  type: string;
+  name: string;
+  hits: number;
+  bandwidth: number;
+  prev: {
+    hits: number;
+    bandwidth: number;
+  };
+  links: {
+    self: string;
+    versions: string;
+  };
+};
 
 export type PackagesModuleType = {
-  count: number;
+  packages: null | Package[];
+  package: null | PackageModel;
+  loading: boolean;
 };
 
 const packagesModule: Module<PackagesModuleType, RootState> = {
   state: () => ({
-    count: 1,
+    packages: null,
+    loading: false,
+    package: null,
   }),
   mutations: {
-    increment(state) {
-      // `state` is the local module state
-      state.count++;
+    setPackages(state, payload: { data: Package[] }) {
+      const { data } = payload;
+      state.packages = data;
     },
-    updateCount(state, count) {
-      console.log(count);
-      return (state.count += count);
+    setLoading(state, payload: boolean) {
+      state.loading = payload;
     },
   },
   actions: {
-    async fetchCount(context) {
-      const res = await fetch(
-        'https://jsonplaceholder.typicode.com/todos',
-      ).then((res) => res.json());
-
-      console.log(res);
-      context.commit('updateCount', 10);
+    async fetchCount(
+      context,
+      payload: { limit: number; page: number },
+    ) {
+      const { page, limit } = payload;
+      try {
+        context.commit('setLoading', true);
+        const res = await api.packages.getList(page, limit);
+        context.commit('setPackages', {
+          data: res.data,
+          page: page,
+        });
+      } catch (e) {
+        console.error(e);
+      } finally {
+        context.commit('setLoading', false);
+      }
     },
   },
   getters: {
-    getCount(state) {
-      return state.count;
+    getPackages(state) {
+      return state.packages;
+    },
+    loadingStatus(state) {
+      return state.loading;
     },
   },
 };
