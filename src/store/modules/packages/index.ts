@@ -2,6 +2,35 @@ import { Module } from 'vuex';
 import { RootState } from '../../index';
 import api from '../../../service/api';
 
+export type PackageModel = {
+  hits: {
+    rank: number;
+    typeRank: number;
+    total: number;
+    dates: { [key: string]: number };
+    prev: {
+      rank: number;
+      typeRank: number;
+      total: number;
+    };
+  };
+  bandwidth: {
+    rank: number;
+    typeRank: number;
+    total: number;
+    dates: { [key: string]: number };
+    prev: {
+      rank: number;
+      typeRank: number;
+      total: number;
+    };
+  };
+  links: {
+    self: string;
+    versions: string;
+  };
+};
+
 export type Package = {
   type: string;
   name: string;
@@ -18,19 +47,21 @@ export type Package = {
 };
 
 export type PackagesModuleType = {
-  data: null | Package[];
+  packages: null | Package[];
+  package: null | PackageModel;
   loading: boolean;
 };
 
 const packagesModule: Module<PackagesModuleType, RootState> = {
   state: () => ({
-    data: null,
+    packages: null,
     loading: false,
+    package: null,
   }),
   mutations: {
     setPackages(state, payload: { data: Package[] }) {
       const { data } = payload;
-      state.data = data;
+      state.packages = data;
     },
     setLoading(state, payload: boolean) {
       state.loading = payload;
@@ -58,7 +89,7 @@ const packagesModule: Module<PackagesModuleType, RootState> = {
   },
   getters: {
     getPackages(state) {
-      return state.data;
+      return state.packages;
     },
     loadingStatus(state) {
       return state.loading;

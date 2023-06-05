@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive } from 'vue';
 import { useStore } from 'vuex';
+import { ModalName } from './modals/modalName';
 
 const store = useStore();
 
@@ -29,8 +30,15 @@ const handleLoadMore = (type: 'more' | 'prev') => {
   });
 };
 
-function handleOpenModal() {
-  console.log('open modal');
+function handleOpenModal(name: string) {
+  console.log(1);
+  store.commit('addModal', {
+    isOpen: true,
+    name: ModalName.PackageDetails,
+    props: {
+      name,
+    },
+  });
 }
 </script>
 
@@ -50,8 +58,9 @@ function handleOpenModal() {
           class="item"
           v-for="(item, index) in packagesData"
           :key="item.name"
+          @click="handleOpenModal(item.name)"
         >
-          <td @click="handleOpenModal">
+          <td>
             {{
               state.page >= 2
                 ? index + 1 + state.page * 10

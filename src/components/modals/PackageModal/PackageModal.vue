@@ -1,32 +1,23 @@
-<template>
-  <div class="text-center">
-    <v-dialog v-model="dialog" width="auto">
-      <template v-slot:activator="{ props }">
-        <v-btn color="primary" v-bind="props"> Open Dialog </v-btn>
-      </template>
+<script setup lang="ts">
+import Modal from '../Modal/Modal.vue';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import { ModalName } from '../modalName';
+import PackageModalContainer from './PackageModalContainer/PackageModalContainer.vue';
+const store = useStore();
 
-      <v-card>
-        <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-          do eiusmod tempor incididunt ut labore et dolore magna
-          aliqua.
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="primary" block="true" @click="dialog = false"
-            >Close Dialog</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      dialog: false,
-    };
-  },
+const modal = computed(() => {
+  return store.getters.getModalByName(ModalName.PackageDetails);
+});
+const handleCloseModal = () => {
+  store.commit('removeModal', ModalName.PackageDetails);
 };
+
+console.log(modal);
 </script>
+
+<template>
+  <Modal :is-open="!!modal?.isOpen" :on-close="handleCloseModal">
+    <PackageModalContainer :name="modal?.props.name as string" />
+  </Modal>
+</template>

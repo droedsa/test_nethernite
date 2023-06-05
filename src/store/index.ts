@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 
 import packages, { PackagesModuleType } from './modules/packages';
+import modals from './modules/modals';
 
 export type RootState = {
   packages: PackagesModuleType;
@@ -8,5 +9,5 @@ export type RootState = {
 
 // Create a new store instance.
 export const store = createStore({
-  modules: { packages },
+  modules: { packages, modals },
 });
