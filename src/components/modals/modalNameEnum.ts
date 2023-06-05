@@ -1,3 +1,3 @@
-export enum ModalName {
+export enum ModalNameEnum {
   PackageDetails = 'package-details',
 }

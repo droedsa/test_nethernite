@@ -1,5 +1,8 @@
 import axios from './axios';
-import { Package } from '../../store/modules/packages';
+import {
+  Package,
+  PackageModel,
+} from '../../store/modules/packages/packagesType';
 
 const allEndpoints = {
   packages: {
@@ -9,6 +12,11 @@ const allEndpoints = {
       type: 'gh' | 'npm' = 'npm',
     ): Promise<{ data: Package[] }> =>
       axios.get('/stats/packages', { params: { page, limit, type } }),
+    getPackageInfo: (
+      packageName: string,
+    ): Promise<{ data: PackageModel }> => {
+      return axios.get(`/stats/packages/npm/${packageName}`);
+    },
   },
 };
 

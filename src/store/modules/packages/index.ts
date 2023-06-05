@@ -1,70 +1,39 @@
 import { Module } from 'vuex';
 import { RootState } from '../../index';
 import api from '../../../service/api';
-
-export type PackageModel = {
-  hits: {
-    rank: number;
-    typeRank: number;
-    total: number;
-    dates: { [key: string]: number };
-    prev: {
-      rank: number;
-      typeRank: number;
-      total: number;
-    };
-  };
-  bandwidth: {
-    rank: number;
-    typeRank: number;
-    total: number;
-    dates: { [key: string]: number };
-    prev: {
-      rank: number;
-      typeRank: number;
-      total: number;
-    };
-  };
-  links: {
-    self: string;
-    versions: string;
-  };
-};
-
-export type Package = {
-  type: string;
-  name: string;
-  hits: number;
-  bandwidth: number;
-  prev: {
-    hits: number;
-    bandwidth: number;
-  };
-  links: {
-    self: string;
-    versions: string;
-  };
-};
+import { Package, PackageModel } from './packagesType';
 
 export type PackagesModuleType = {
   packages: null | Package[];
   package: null | PackageModel;
-  loading: boolean;
+  packageLoading: boolean;
+  packagesLoading: boolean;
 };
 
 const packagesModule: Module<PackagesModuleType, RootState> = {
   state: () => ({
     packages: null,
-    loading: false,
+    packagesLoading: false,
     package: null,
+    packageLoading: false,
   }),
   mutations: {
     setPackages(state, payload: { data: Package[] }) {
       const { data } = payload;
       state.packages = data;
     },
-    setLoading(state, payload: boolean) {
-      state.loading = payload;
+    setPackagesLoading(state, payload: boolean) {
+      state.packagesLoading = payload;
+    },
+    setPackageLoading(state, payload: boolean) {
+      state.packageLoading = payload;
+    },
+    setPackage(state, payload: PackageModel) {
+      state.package = payload;
+    },
+    clearPackage(state) {
+      state.package = null;
+      state.packageLoading = false;
     },
   },
   actions: {
@@ -74,7 +43,7 @@ const packagesModule: Module<PackagesModuleType, RootState> = {
     ) {
       const { page, limit } = payload;
       try {
-        context.commit('setLoading', true);
+        context.commit('setPackagesLoading', true);
         const res = await api.packages.getList(page, limit);
         context.commit('setPackages', {
           data: res.data,
@@ -83,7 +52,20 @@ const packagesModule: Module<PackagesModuleType, RootState> = {
       } catch (e) {
         console.error(e);
       } finally {
-        context.commit('setLoading', false);
+        context.commit('setPackagesLoading', false);
+      }
+    },
+    async getPackage(context, payload: string) {
+      try {
+        context.commit('setPackageLoading', true);
+        const res = await api.packages.getPackageInfo(
+          payload || 'test',
+        );
+        context.commit('setPackage', res.data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        context.commit('setPackageLoading', false);
       }
     },
   },
@@ -92,7 +74,13 @@ const packagesModule: Module<PackagesModuleType, RootState> = {
       return state.packages;
     },
     loadingStatus(state) {
-      return state.loading;
+      return state.packagesLoading;
+    },
+    getPackageInfo(state) {
+      return state.package;
+    },
+    getPackagesLoadingStatus(state) {
+      return state.packageLoading;
     },
   },
 };

@@ -35,12 +35,13 @@ watch(
 
 <template>
   <v-dialog
+    class="w-100"
     :min-width="minWidth || '500px'"
     :max-width="maxWidth || '800px'"
     @close="props.onClose"
     v-model="state.dialog"
     @on-update:model-value="props.onClose"
-    width="auto"
+    width="100%"
   >
     <v-card>
       <div class="pa-4">
